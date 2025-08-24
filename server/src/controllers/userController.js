@@ -1,99 +1,98 @@
-import { pool } from '../config/database.js';
-import { decodeToken, signToken} from '../utils/jwtUtils.js';
+import { pool } from "../config/database.js";
+import bcrypt from "bcryptjs";
+import { signToken } from "../utils/jwtUtils.js";
 
 const userController = {
-
   registerUser: async (req, res) => {
     try {
-      const { name, email, age } = req.body;
-      
-      // Business logic: Check if email already exists (uncomment when DB is ready)
-      // const [existingUsers] = await pool.execute(
-      //   'SELECT id FROM users WHERE email = ?',
-      //   [email]
-      // );
-      
-      // if (existingUsers.length > 0) {
-      //   return res.status(409).json({
-      //     success: false,
-      //     message: 'Email already exists'
-      //   });
-      // }
-      
-      // Insert new user (uncomment when DB is ready)
-      // const [result] = await pool.execute(
-      //   'INSERT INTO users (name, email, age) VALUES (?, ?, ?)',
-      //   [name, email, age]
-      // );
+      const { name, email, password } = req.body;
 
-      const accessToken = signToken({ userId : 123})
+      const [existingUsers] = await pool.execute(
+        "SELECT id FROM users WHERE email = ?",
+        [email]
+      );
+
+      if (existingUsers.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists",
+        });
+      }
+
+      // Password Encryption
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+
+      // Insert new user (uncomment when DB is ready)
+      const [result] = await pool.execute(
+        "INSERT INTO users (name, email,password, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
+        [name, email, hash]
+      );
+
+      const accessToken = signToken({ userId: result.insertId });
 
       res.status(201).json({
         success: true,
-        message: 'User created successfully',
+        message: "User created successfully",
         data: {
-          // id: result.insertId,
+          id: result.insertId,
           accessToken,
           name,
           email,
-          age: age || null,
-          created_at: new Date().toISOString()
-        }
+          created_at: new Date().toISOString(),
+        },
       });
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
       res.status(500).json({
         success: false,
-        message: 'Internal server error',
+        message: "Internal server error",
       });
     }
   },
 
-  loginuser : async (req, res) => {
+  loginuser: async (req, res) => {
     try {
-      const { name, email, age } = req.body;
-      
-      // Business logic: Check if email already exists (uncomment when DB is ready)
-      // const [existingUsers] = await pool.execute(
-      //   'SELECT id FROM users WHERE email = ?',
-      //   [email]
-      // );
-      // 
-      // if (existingUsers.length > 0) {
-      //   return res.status(409).json({
-      //     success: false,
-      //     message: 'Email already exists'
-      //   });
-      // }
-      
-      // Insert new user (uncomment when DB is ready)
-      // const [result] = await pool.execute(
-      //   'INSERT INTO users (name, email, age) VALUES (?, ?, ?)',
-      //   [name, email, age]
-      // );
+      const { email, password } = req.body;
+
+      const [[user]] = await pool.execute(
+        "SELECT id,email,password,name FROM users WHERE email = ?",
+        [email]
+      );
+
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid Email or Password",
+        });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid email or password",
+        });
+      }
+
+      const accessToken = signToken({ userId: user.id });
 
       res.status(201).json({
         success: true,
-        message: 'User created successfully',
-        data: {
-          // id: result.insertId,
-          id: Math.floor(Math.random() * 1000), // Temporary ID for demo
-          name,
-          email,
-          age: age || null,
-          created_at: new Date().toISOString()
-        }
+        message: "Login successfully",
+        accessToken,
+        name: user.name,
+        email: user.email,
       });
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error login user:", error);
       res.status(500).json({
         success: false,
-        message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        message: "Internal server error",
       });
     }
   },
-
 };
 
-export { userController} ;
+export { userController };

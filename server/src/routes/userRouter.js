@@ -1,14 +1,25 @@
-import { Router } from 'express'
-import { registerUserValidation } from '../validators/userValidator.js'
-import { handleValidationErrors } from '../middlewares/validate.js';
-import {userController} from '../controllers/userController.js';
+import { Router } from "express";
+import {
+  registerUserValidation,
+  loginUserValidation,
+} from "../validators/userValidator.js";
+import { handleValidationErrors } from "../middlewares/validate.js";
+import { userController } from "../controllers/userController.js";
 
-const router = Router()
+const router = Router();
 
-router.post('/',
+router.post(
+  "/register",
   registerUserValidation,
   handleValidationErrors,
   userController.registerUser
 );
 
-export default router
+router.post(
+  "/login",
+  loginUserValidation,
+  handleValidationErrors,
+  userController.loginuser
+);
+
+export default router;
