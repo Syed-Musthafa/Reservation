@@ -5,9 +5,7 @@ import cors from "cors";
 dotenv.config();
 
 // Routes
-import userRouter from "./routes/userRouter.js";
-import roomRouter from "./routes/roomRouter.js";
-import bookingRouter from "./routes/bookingRouter.js";
+import router from "./routes/index.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,12 +15,12 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use("/users", userRouter);
-app.use("/rooms", roomRouter);
-app.use("/bookings", bookingRouter);
+app.use("/api", router);
 
 // error handler
 app.use((error, req, res, next) => {
+  console.log("error", error);
+
   res.status(500).json({
     success: false,
     message: "Something went wrong!",

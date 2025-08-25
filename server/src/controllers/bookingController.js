@@ -57,7 +57,9 @@ const bookingController = {
     try {
       const [bookings] = await pool.execute(
         `
-        SELECT * FROM bookings WHERE user_id = ?
+        SELECT ru.name as room_name, ru.description as description, b.booking_date as booking_date, b.from_time as from_time, b.to_time as to_time, b.status as status, b.id as booking_id  FROM bookings b 
+        JOIN rooms ru ON ru.id = b.room_id
+        WHERE user_id = ?
         ORDER BY booking_date DESC, from_time ASC
       `,
         [user_id]
