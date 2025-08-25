@@ -13,7 +13,7 @@ function RoomCard({ room }) {
             className="flex gap-6 border rounded-lg p-4 shadow-sm hover:shadow-md transition"
         >
             <img
-                src={"https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"}
+                src={"https://png.pngtree.com/background/20230626/original/pngtree-a-stunning-3d-visualization-of-a-luxurious-blue-bedroom-suite-featuring-picture-image_4054942.jpg"}
                 alt={room.name}
                 className="w-48 h-36 object-cover rounded-lg"
             />
@@ -21,12 +21,7 @@ function RoomCard({ room }) {
                 <div>
                     <h3 className="text-lg font-semibold">{room.name}</h3>
                     <p className="text-sm text-gray-500">{room.description}</p>
-                    {/* <p className="text-xs text-gray-400 mb-2">
-                        data
-                    </p> */}
                     <p className="text-sm font-semibold">{room.room_type}</p>
-                    {/* <p className="text-sm text-gray-600">{room.bed}</p>
-                    <p className="text-sm text-gray-600">{room.bathroom}</p> */}
 
 
                 </div>
@@ -49,7 +44,8 @@ function RoomCard({ room }) {
                     </div>
                     <button
                         onClick={() => navigate(`/room/${room.id}`)}
-                        className="ml-6 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition">
+                        className="w-1/3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full py-3 font-semibold hover:from-blue-600 hover:to-blue-800 transition"
+                    >
                         See booking options
                     </button>
                 </div>

@@ -14,8 +14,6 @@ async function authMiddleware(req, res, next) {
     return res.status(401).json({ error: "Token not provided" });
   }
 
-  console.log("token", token);
-
   const data = decodeToken(token);
 
   const { userId } = data.payload;

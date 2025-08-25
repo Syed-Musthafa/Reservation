@@ -18,11 +18,10 @@ function Login() {
 
         try {
             const data = await login(email, password);
-            // console.log("loginData", data)
             localStorage.setItem("token", data.accessToken);
             toast.success("Login Success!", { autoClose: 3000 });
 
-            navigate("/rooms");
+            navigate('/rooms');
         } catch (err) {
             setError(err.message);
             toast.error(`${err.message}`, { autoClose: 3000 });
@@ -73,8 +72,9 @@ function Login() {
                         Create one
                     </Link>
                 </p>
-                <ToastContainer />
+
             </div>
+            <ToastContainer />
         </div>
     );
 }

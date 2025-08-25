@@ -3,9 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBooking, fetchRoomById } from "../api/room";
 import { toast, ToastContainer } from "react-toastify";
 
-
 function Room() {
-
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -16,16 +14,13 @@ function Room() {
     const [toTime, setToTime] = useState("");
     const [slotLoading, setSlotLoading] = useState(false);
 
-
     const getTodayDate = () => {
         const today = new Date();
         return today.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
     };
 
-
     const [date, setDate] = useState(getTodayDate());
 
-    console.log("room", room)
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -44,30 +39,17 @@ function Room() {
                 setLoading(false);
             }
         })();
-
-
     }, [id, navigate]);
-
 
     const handleBooking = async () => {
         setSlotLoading(true);
 
-        // const payload = {
-        //     room_id: parseInt(id),
-        //     from_time: fromTime,
-        //     to_time: toTime,
-        //     booking_date: date,
-        // };
-
-        // console.log("payload", payload)
-
         try {
             const data = await createBooking(parseInt(id), fromTime, toTime, date);
             toast.success("Booking successful!", { autoClose: 3000 });
-
+            navigate(`/rooms`);
         } catch (err) {
             toast.error(`${err.message}`, { autoClose: 3000 });
-
         } finally {
             setSlotLoading(false);
         }
@@ -76,15 +58,13 @@ function Room() {
     if (loading) return <div className="p-6">Loading room details...</div>;
     if (error) return <div className="p-6 text-red-600">{error}</div>;
 
-
-
     return (
         <div className="max-w-5xl mx-auto bg-white rounded-lg  p-6 my-10">
             <div className="flex flex-col md:flex-row gap-6">
                 {/* Image */}
                 <div className="md:w-1/2 rounded-lg overflow-hidden shadow-md">
                     <img
-                        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+                        src="https://png.pngtree.com/background/20230626/original/pngtree-a-stunning-3d-visualization-of-a-luxurious-blue-bedroom-suite-featuring-picture-image_4054942.jpg"
                         alt="Presidential suite"
                         className="w-full h-full object-cover"
                     />
@@ -95,15 +75,11 @@ function Room() {
                     <div>
                         <h2 className="text-2xl font-bold mb-2 flex items-center">
                             {room.name}
-
                         </h2>
 
                         <div className="mb-6 text-gray-600">
-                            <p className="flex items-center gap-2 mb-1">
-                                {room.description}
-                            </p>
+                            <p className="flex items-center gap-2 mb-1">{room.description}</p>
                         </div>
-
                     </div>
 
                     {/* Facilities */}
@@ -206,23 +182,21 @@ function Room() {
                 {/* Price + Reserve Button */}
                 <div className="flex items-center gap-6">
                     <div>
-                        <span className="text-2xl font-bold">€390,00</span>
+                        <span className="text-2xl font-bold">$390,00</span>
                     </div>
 
                     <button
                         onClick={handleBooking}
                         disabled={slotLoading}
-                        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                        className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-full py-3 px-3 font-semibold hover:from-blue-600 hover:to-blue-800 transition"
+                    >
                         {slotLoading ? "Reserving..." : "Reserve"}
                     </button>
                 </div>
             </div>
             <ToastContainer />
-
         </div>
-
     );
 }
 
-
-export default Room
+export default Room;

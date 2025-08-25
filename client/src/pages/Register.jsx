@@ -1,7 +1,31 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React, { useState } from 'react'
+import { Link, useNavigate } from "react-router-dom";
+import { register } from '../api/auth';
+import { toast } from 'react-toastify';
 
 function Register() {
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        try {
+            const data = await register(name, email, password);
+            localStorage.setItem("token", data.data.accessToken);
+            toast.success("Account Created Success!", { autoClose: 3000 });
+            navigate("/rooms");
+        } catch (err) {
+            setError(err.message);
+            toast.error(`${err.message}`, { autoClose: 3000 });
+        }
+    };
+
     return (
 
         <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center px-4">
@@ -13,7 +37,7 @@ function Register() {
                 </h2>
                 <p className="text-gray-600 text-center mb-6">Create your account</p>
 
-                <form className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-4">
                     <div>
                         <label htmlFor="fullname" className="sr-only">
                             Full Name
@@ -22,6 +46,8 @@ function Register() {
                             type="text"
                             id="fullname"
                             placeholder="Full Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             className="w-full rounded-full border border-gray-300 bg-white text-gray-900 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
@@ -34,6 +60,8 @@ function Register() {
                             type="email"
                             id="email"
                             placeholder="Email id"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full rounded-full border border-gray-300 bg-white text-gray-900 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
@@ -46,6 +74,8 @@ function Register() {
                             type="password"
                             id="password"
                             placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="w-full rounded-full border border-gray-300 bg-white text-gray-900 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
@@ -67,6 +97,8 @@ function Register() {
                     </Link>
                 </p>
             </div>
+
+            <ToastContainer />
         </div>
     );
 

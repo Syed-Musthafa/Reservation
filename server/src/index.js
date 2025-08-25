@@ -19,8 +19,6 @@ app.use("/api", router);
 
 // error handler
 app.use((error, req, res, next) => {
-  console.log("error", error);
-
   res.status(500).json({
     success: false,
     message: "Something went wrong!",

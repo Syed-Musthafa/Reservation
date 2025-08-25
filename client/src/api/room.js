@@ -2,8 +2,8 @@ import api from "./api";
 
 export const fetchRooms = async () => {
   try {
-    const response = await api.get("/rooms"); // Adjust endpoint if needed
-    return response.data; // Assuming response.data is an array of rooms
+    const response = await api.get("/rooms");
+    return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
       throw new Error(error.response.data.message || "Failed to fetch rooms");
@@ -39,7 +39,6 @@ export const createBooking = async (
       to_time,
       booking_date,
     });
-    console.log("response", response);
     return response.data;
   } catch (error) {
     if (error.response?.data?.message) {
